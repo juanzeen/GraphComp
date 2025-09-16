@@ -20,6 +20,14 @@ Este programa em C utiliza a biblioteca OpenGL (GLUT) para desenhar e manipular 
   - **Clique com o botão direito**: Abre um menu para selecionar tipos de curva, transformações e outras opções.
   - **Arrastar o mouse**: Move um ponto de controle selecionado.
 
+## Como Compilar e Executar
+
+Para compilar o código, você precisará ter o compilador GCC e as bibliotecas do OpenGL (GLUT) instaladas.
+
+```bash
+gcc teste.c -o teste -lglut -lGL -lGLU -lm
+./teste
+```
 
 ## Como Usar
 
@@ -36,7 +44,8 @@ Este programa em C utiliza a biblioteca OpenGL (GLUT) para desenhar e manipular 
 ## Estrutura do Código
 
 ### Tipos de Dados
-- `tipoPto`: Estrutura que representa um ponto no espaço 2D.
+
+- `tipoPto`: Estrutura que representa um ponto no espaço 2D (com uma coordenada `z` não utilizada).
 - `ptsCurva[]`: Array para armazenar os pontos da curva gerada.
 - `ptsContrle[]`: Array para armazenar os pontos de controle definidos pelo usuário.
 
@@ -118,3 +127,13 @@ Este programa em C utiliza a biblioteca OpenGL (GLUT) para desenhar e manipular 
 - **`ptoCurva()`**: Calcula as coordenadas de um único ponto na curva para um valor específico do parâmetro `t` (que geralmente varia de 0 a 1). A função `geraCurva` chama `ptoCurva` repetidamente com valores crescentes de `t` para criar a sequência de pontos que forma a curva.
 
 - **Funções de Transformação (`translacao`, `rotacao_centro`, etc.)**: Este conjunto de funções aplica as transformações geométricas (como translação, rotação em torno do centro, etc.) aos pontos de controle da curva. Quando os pontos de controle são transformados, a curva inteira é recalculada e redesenhada em sua nova posição, orientação ou escala.
+
+# Modificações
+
+As principais diferenças entre `codigoErrado.c` e `curves.c` são:
+
+*   **Matrizes de base:** As matrizes para as curvas de Hermite, Bézier e B-spline estão incorretas em `codigoErrado.c`. Em `curves.c`, elas estão preenchidas com os valores corretos para cada tipo de curva.
+*   **Funções de transformação:** O arquivo `codigoErrado.c` não implementa as funções de translação, rotação, escala, cisalhamento e espelhamento. O arquivo `curves.c` contém a implementação completa de todas essas transformações geométricas.
+*   **Cálculo da curva de Hermite:** A função `geraCurva` em `codigoErrado.c` não calcula corretamente as tangentes para a curva de Hermite. A versão em `curves.c` implementa o cálculo correto das tangentes usando diferenças centrais.
+*   **Menus e interatividade:** O `curves.c` adiciona opções de menu para as novas transformações (espelhamento) e implementa a lógica para aplicá-las aos pontos de controle, tanto através do menu quanto da interação com o mouse. O `codigoErrado.c` não possui essa funcionalidade.
+*   **Pequenos erros e ajustes:** Existem várias outras pequenas diferenças, como a falta de defines para `ESPELHARX` e `ESPELHARY`, diferenças na indentação, e a falta de uma verificação de segurança no `mouseHandle` do `codigoErrado.c`.
