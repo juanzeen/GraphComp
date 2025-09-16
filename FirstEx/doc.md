@@ -20,14 +20,6 @@ Este programa em C utiliza a biblioteca OpenGL (GLUT) para desenhar e manipular 
   - **Clique com o botão direito**: Abre um menu para selecionar tipos de curva, transformações e outras opções.
   - **Arrastar o mouse**: Move um ponto de controle selecionado.
 
-## Como Compilar e Executar
-
-Para compilar o código, você precisará ter o compilador GCC e as bibliotecas do OpenGL (GLUT) instaladas.
-
-```bash
-gcc teste.c -o teste -lglut -lGL -lGLU -lm
-./teste
-```
 
 ## Como Usar
 
@@ -44,8 +36,7 @@ gcc teste.c -o teste -lglut -lGL -lGLU -lm
 ## Estrutura do Código
 
 ### Tipos de Dados
-
-- `tipoPto`: Estrutura que representa um ponto no espaço 2D (com uma coordenada `z` não utilizada).
+- `tipoPto`: Estrutura que representa um ponto no espaço 2D.
 - `ptsCurva[]`: Array para armazenar os pontos da curva gerada.
 - `ptsContrle[]`: Array para armazenar os pontos de controle definidos pelo usuário.
 
