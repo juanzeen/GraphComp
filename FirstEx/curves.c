@@ -8,13 +8,11 @@
 #define NPOLYGON 6
 #define PHI 3.141572
 
-//  tipo de curvas ------
 #define HERMITE 1
 #define BEZIER 2
 #define BSPLINE 3
 #define CATMULLR 4
 
-//  tipo de transformação ------
 #define TRANSLACAO 1
 #define ROTACAO 2
 #define SCALA 3
@@ -33,42 +31,37 @@ tipoPto ptsCurva[MAXVERTEXS];
 tipoPto ptsContrle[MAXVERTEXS];
 
 int windW, windH;
-int nPtsCtrole, nPtsCurva; // nppuntos;
+int nPtsCtrole, nPtsCurva;
 
 int jaCurva = 0;
 int ptoSelect = -1;
 int tipoCurva = 0;
 int tipoTransforma = 0;
 
-// matriz de trabalho
 float M[4][4] =
 		{{0.0, 0.0, 0.0, 0.0},
 		 {0.0, 0.0, 0.0, 0.0},
 		 {0.0, 0.0, 0.0, 0.0},
 		 {0.0, 0.0, 0.0, 0.0}};
 
-// matriz de Hermite (coeficientes para t^3,t^2,t,1 nas linhas)
 float Mh[4][4] =
 		{{2.0, -2.0, 1.0, 1.0},
 		 {-3.0, 3.0, -2.0, -1.0},
 		 {0.0, 0.0, 1.0, 0.0},
 		 {1.0, 0.0, 0.0, 0.0}};
 
-// matriz de Bezier (cubic Bernstein -> power basis)
 float Mb[4][4] =
 		{{-1.0, 3.0, -3.0, 1.0},
 		 {3.0, -6.0, 3.0, 0.0},
 		 {-3.0, 3.0, 0.0, 0.0},
 		 {1.0, 0.0, 0.0, 0.0}};
 
-// matriz de B-spline  * 1/6 (cubic uniform)
 float Ms[4][4] =
 		{{-1.0, 3.0, -3.0, 1.0},
 		 {3.0, -6.0, 3.0, 0.0},
 		 {-3.0, 0.0, 3.0, 0.0},
 		 {1.0, 4.0, 1.0, 0.0}};
 
-// matriz de Catmull Rom  * 1/2
 float Mc[4][4] =
 		{{-1.0, 3.0, -3.0, 1.0},
 		 {2.0, -5.0, 4.0, -1.0},
@@ -88,7 +81,6 @@ float MCor[9][3] =
 				{1.0, 0.0, 0.0}};
 int nCors = 9;
 
-// --- utilitarias de transformacao (3x3 homogeneous)
 void multMat3Vec(const float A[3][3], const float v[3], float out[3])
 {
 	int i, j;
@@ -121,7 +113,7 @@ void translacao(float dx, float dy)
 
 void escala_centro(float sx, float sy)
 {
-	// escala em torno do centróide dos pontos de controle
+
 	float cx = 0, cy = 0;
 	for (int i = 0; i < nPtsCtrole; i++)
 	{
@@ -133,7 +125,7 @@ void escala_centro(float sx, float sy)
 	float T1[3][3] = {{1, 0, -cx}, {0, 1, -cy}, {0, 0, 1}};
 	float S[3][3] = {{sx, 0, 0}, {0, sy, 0}, {0, 0, 1}};
 	float T2[3][3] = {{1, 0, cx}, {0, 1, cy}, {0, 0, 1}};
-	// multiply: T2 * S * T1
+
 	float tmp[3][3];
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
@@ -220,7 +212,7 @@ void shear(float shx, float shy)
 }
 
 void espelharY()
-{ // reflexao em X (y -> -y) em torno do centróide
+{
 	float cx = 0, cy = 0;
 	for (int i = 0; i < nPtsCtrole; i++)
 	{
@@ -252,7 +244,7 @@ void espelharY()
 }
 
 void espelharX()
-{ // reflexao em Y (x -> -x) em torno do centróide
+{
 	float cx = 0, cy = 0;
 	for (int i = 0; i < nPtsCtrole; i++)
 	{
@@ -291,7 +283,6 @@ void ptoCurva(float t, int j, float pp[3])
 
 	pp[0] = pp[1] = pp[2] = 0.0;
 
-	// preparando os pontos de controle (fechado usando modulo)
 	for (i = 0; i < 4; i++)
 	{
 		ji = (j + i) % nPtsCtrole;
@@ -302,13 +293,11 @@ void ptoCurva(float t, int j, float pp[3])
 
 	if (tipoCurva == HERMITE)
 	{
-		// For Hermite we need P0,P1,T0,T1. We'll use P0=ptsCont[0], P1=ptsCont[1]
-		// Tangents computed from neighboring points (central differences)
 		float px_minus = ptsContrle[(j + nPtsCtrole - 1) % nPtsCtrole].v[0];
 		float py_minus = ptsContrle[(j + nPtsCtrole - 1) % nPtsCtrole].v[1];
 		float px_plus2 = ptsContrle[(j + 2) % nPtsCtrole].v[0];
 		float py_plus2 = ptsContrle[(j + 2) % nPtsCtrole].v[1];
-		// t0 = (P1 - P_{-1})/2, t1 = (P2 - P0)/2
+
 		ptsCont[2].v[0] = (ptsCont[1].v[0] - px_minus) * 0.5f;
 		ptsCont[2].v[1] = (ptsCont[1].v[1] - py_minus) * 0.5f;
 		ptsCont[3].v[0] = (px_plus2 - ptsCont[0].v[0]) * 0.5f;
@@ -360,14 +349,10 @@ void coord_line(void)
 
 	glColor3f(0.0, 0.0, 1.0);
 
-	// vertical line
-
 	glBegin(GL_LINE_STRIP);
 	glVertex2f(-windW, 0);
 	glVertex2f(windW, 0);
 	glEnd();
-
-	// horizontal line
 
 	glBegin(GL_LINE_STRIP);
 	glVertex2f(0, -windH);
@@ -426,17 +411,17 @@ static void Draw(void)
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	coord_line(); // define eixos do sistema cartesiano
+	coord_line();
 
-	verticesDraw(nPtsCtrole, ptsContrle, 1.0, 0.0, 0.0); // Mostra os pontos de controle
-	Poligono(nPtsCtrole, ptsContrle, 0.0, 0.0, 0.0);		 // mostra o polígono de controle (FECHADO)
+	verticesDraw(nPtsCtrole, ptsContrle, 1.0, 0.0, 0.0);
+	Poligono(nPtsCtrole, ptsContrle, 0.0, 0.0, 0.0);
 
-	if (jaCurva) // opcao ativa para as curvas
+	if (jaCurva)
 		while (j < nPtsCtrole)
 		{
-			geraCurva(j);				 // gera o pedaço da curva
-			c = j % (nCors - 3); // define indico da cor do pedaço
-			// mostra o pedaço da curva
+			geraCurva(j);
+			c = j % (nCors - 3);
+
 			Poligono(nPtsCurva, ptsCurva, MCor[c][0], MCor[c][1], MCor[c][2]);
 			j++;
 		}
@@ -481,28 +466,28 @@ void processMenuCurvas(int option)
 		{
 		case HERMITE:
 			jaCurva = 1;
-			for (i = 0; i < 4; i++) // M := Mh  <--  como matiz de HERMITE
+			for (i = 0; i < 4; i++) //
 				for (j = 0; j < 4; j++)
 					M[i][j] = Mh[i][j];
 			break;
 
 		case BEZIER:
 			jaCurva = 1;
-			for (i = 0; i < 4; i++) // M := Mb  <-- copia matriz de BEZIER
+			for (i = 0; i < 4; i++)
 				for (j = 0; j < 4; j++)
 					M[i][j] = Mb[i][j];
 			break;
 
 		case BSPLINE:
 			jaCurva = 1;
-			for (i = 0; i < 4; i++) // M := Ms  <-- copia matriz de BSPLINE
+			for (i = 0; i < 4; i++)
 				for (j = 0; j < 4; j++)
-					M[i][j] = Ms[i][j] / 6.0f; // normalize
+					M[i][j] = Ms[i][j] / 6.0f;
 			break;
 
 		case CATMULLR:
 			jaCurva = 1;
-			for (i = 0; i < 4; i++) // M := Mc  <-- copia matriz de CatMULLR
+			for (i = 0; i < 4; i++)
 				for (j = 0; j < 4; j++)
 					M[i][j] = Mc[i][j] / 2.0f;
 			break;
@@ -517,8 +502,6 @@ void processMenuTransforma(int option)
 
 	tipoTransforma = option;
 
-	// aplica transformacoes com parametros padrao (cada chamada aplica um passo)
-
 	switch (option)
 	{
 	case TRANSLACAO:
@@ -528,7 +511,7 @@ void processMenuTransforma(int option)
 
 	case ROTACAO:
 		printf("\n Rotacao....\n");
-		rotacao_centro(15.0f); // 15 graus
+		rotacao_centro(15.0f);
 		break;
 
 	case SCALA:
@@ -554,7 +537,7 @@ void processMenuTransforma(int option)
 		break;
 	}
 
-	jaCurva = 0; // forca a regeneração com novos pontos/transformações
+	jaCurva = 0;
 	glutPostRedisplay();
 }
 
@@ -668,16 +651,15 @@ int buscaPuntoClick(int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
-	// esta aqui porque ocorreu um evento: Buttom de mause foi presionado ou solto
-	// estando o cursor na posição (x, y) de canvas
+
 	if (button == GLUT_LEFT)
 		if (state == GLUT_DOWN)
 		{
 			x = x - windW;
 			y = windH - y;
-			if (!jaCurva) // ainda esta na geracao dos pontos de controle
+			if (!jaCurva)
 			{
-				// gera UM ponto de controle por cada CLICK
+
 				glColor3f(0.0, 0.0, 1.0);
 				glPointSize(3);
 				glBegin(GL_POINTS);
@@ -690,7 +672,7 @@ void mouse(int button, int state, int x, int y)
 			}
 			else // todos os pontos de controle ja estao definidos
 			{
-				// busca o ponto selecionado para mover com mouse
+
 				ptoSelect = buscaPuntoClick(x, y);
 				if ((ptoSelect >= 0) && (ptoSelect < nPtsCtrole))
 				{
