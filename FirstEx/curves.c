@@ -219,7 +219,7 @@ void shear(float shx, float shy)
 	applyTransformToControl(R);
 }
 
-void espelharX()
+void espelharY()
 { // reflexao em X (y -> -y) em torno do centróide
 	float cx = 0, cy = 0;
 	for (int i = 0; i < nPtsCtrole; i++)
@@ -251,7 +251,7 @@ void espelharX()
 	applyTransformToControl(R);
 }
 
-void espelharY()
+void espelharX()
 { // reflexao em Y (x -> -x) em torno do centróide
 	float cx = 0, cy = 0;
 	for (int i = 0; i < nPtsCtrole; i++)
@@ -358,7 +358,7 @@ void coord_line(void)
 {
 	glLineWidth(1);
 
-	glColor3f(1.0, 0.0, 0.0);
+	glColor3f(0.0, 0.0, 1.0);
 
 	// vertical line
 
@@ -379,7 +379,7 @@ void verticesDraw(int n, tipoPto vertices[MAXVERTEXS], float cr, float cg, float
 {
 	int i;
 	glColor3f(cb, cg, cr);
-	glPointSize(5);
+	glPointSize(10);
 	glBegin(GL_POINTS);
 	for (i = 0; i < n; i++)
 		glVertex2f(vertices[i].v[0], vertices[i].v[1]);
@@ -428,7 +428,7 @@ static void Draw(void)
 
 	coord_line(); // define eixos do sistema cartesiano
 
-	verticesDraw(nPtsCtrole, ptsContrle, 0.0, 1.0, 0.0); // Mostra os pontos de controle
+	verticesDraw(nPtsCtrole, ptsContrle, 1.0, 0.0, 0.0); // Mostra os pontos de controle
 	Poligono(nPtsCtrole, ptsContrle, 0.0, 0.0, 0.0);		 // mostra o polígono de controle (FECHADO)
 
 	if (jaCurva) // opcao ativa para as curvas
@@ -587,17 +587,17 @@ void createGLUTMenus()
 	submenu2 = glutCreateMenu(processMenuTransforma);
 	glutAddMenuEntry("Translacao", TRANSLACAO);
 	glutAddMenuEntry("Rotacao", ROTACAO);
-	glutAddMenuEntry("Scala", SCALA);
+	glutAddMenuEntry("Escala", SCALA);
 	glutAddMenuEntry("Cisalha", CISALHA);
 	glutAddMenuEntry("Espelhar X", ESPELHARX);
 	glutAddMenuEntry("Espelhar Y", ESPELHARY);
-	glutAddMenuEntry("Manipular Pto", 0);
+	glutAddMenuEntry("Manipular ponto", 0);
 
 	menu = glutCreateMenu(processMenuEvents);
-	glutAddMenuEntry("Poligono de Control", 1);
+	glutAddMenuEntry("Poligono de Controle", 1);
 	glutAddSubMenu("Tipo de Curva", submenu1);
 	glutAddSubMenu("Transformacao", submenu2);
-	glutAddMenuEntry("Limpiar Todo...", 2);
+	glutAddMenuEntry("Limpar tudo...", 2);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -630,7 +630,7 @@ void motion(int x, int y)
 				break;
 
 			case SCALA:
-				printf(" Scala, ");
+				printf(" Escala Centro, ");
 				escala_centro(1.01f, 1.01f);
 				break;
 
@@ -678,7 +678,7 @@ void mouse(int button, int state, int x, int y)
 			if (!jaCurva) // ainda esta na geracao dos pontos de controle
 			{
 				// gera UM ponto de controle por cada CLICK
-				glColor3f(0.0, 1.0, 0.0);
+				glColor3f(0.0, 0.0, 1.0);
 				glPointSize(3);
 				glBegin(GL_POINTS);
 				glVertex2i(x, y);
